@@ -119,19 +119,7 @@
             background: #176d13;
             border: 3px solid #ffe44d;
         }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            15% { transform: translateX(-12px); }
-            30% { transform: translateX(10px); }
-            45% { transform: translateX(-8px); }
-            60% { transform: translateX(6px); }
-            75% { transform: translateX(-4px); }
-            90% { transform: translateX(2px); }
-            100% { transform: translateX(0); }
-        }
-        .shake {
-            animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both;
-        }
+        /* Mejoras visuales para responsividad */
         @media (max-width: 430px) {
             .container {
                 width: 100vw;
@@ -150,6 +138,19 @@
                 font-size: 1.3rem;
             }
         }
+        .shake {
+            animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            15% { transform: translateX(-12px); }
+            30% { transform: translateX(10px); }
+            45% { transform: translateX(-8px); }
+            60% { transform: translateX(6px); }
+            75% { transform: translateX(-4px); }
+            90% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
@@ -159,28 +160,27 @@
             <option value="es">Español</option>
             <option value="en">English</option>
         </select>
-        <div class="instrucciones" id="instrucciones">
-            Busca las pistas e ingresa los<br>códigos secretos
+        <div class="instrucciones" id="instrucciones">Busca las pistas e ingresa los<br>códigos secretos</div>
+        <div class="codigo-container">
+            <input class="codigo-input" maxlength="1" autocomplete="off" />
+            <input class="codigo-input" maxlength="1" autocomplete="off" />
+            <input class="codigo-input" maxlength="1" autocomplete="off" />
+            <input class="codigo-input" maxlength="1" autocomplete="off" />
+            <input class="codigo-input" maxlength="1" autocomplete="off" />
         </div>
-        <form id="code-form" autocomplete="off" style="display: flex; flex-direction: column; align-items: center;">
-            <div class="codigo-container">
-                <input class="codigo-input" maxlength="1" autocomplete="off" />
-                <input class="codigo-input" maxlength="1" autocomplete="off" />
-                <input class="codigo-input" maxlength="1" autocomplete="off" />
-                <input class="codigo-input" maxlength="1" autocomplete="off" />
-                <input class="codigo-input" maxlength="1" autocomplete="off" />
-            </div>
-            <button class="btn-aceptar" id="btn-aceptar" type="submit">Aceptar</button>
-        </form>
+        <button class="btn-aceptar" id="btn-aceptar">Aceptar</button>
     </div>
     <script>
+        // Interacción para inputs: foco automático y estilos
         const inputs = document.querySelectorAll('.codigo-input');
-        const container = document.querySelector('.container');
-
         inputs.forEach((input, idx) => {
-            input.addEventListener('focus', () => input.classList.add('active'));
-            input.addEventListener('blur', () => input.classList.remove('active'));
-            input.addEventListener('input', () => {
+            input.addEventListener('focus', () => {
+                input.classList.add('active');
+            });
+            input.addEventListener('blur', () => {
+                input.classList.remove('active');
+            });
+            input.addEventListener('input', (e) => {
                 if (input.value.length === 1 && idx < inputs.length - 1) {
                     inputs[idx + 1].focus();
                 }
@@ -192,38 +192,47 @@
             });
         });
 
-        document.getElementById('code-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const code = Array.from(inputs).map(i => i.value).join('');
-            const isComplete = code.length === 5 && !Array.from(inputs).some(i => i.value === '');
-
-            if (!isComplete) return;
-
-            if (code === '18122') {
-                alert('¡Código correcto!');
-            } else {
-                container.classList.remove('shake');
-                void container.offsetWidth;
-                container.classList.add('shake');
-                setTimeout(() => container.classList.remove('shake'), 450);
-            }
-        });
-
+        // Cambio de idioma
         const idiomaSelect = document.getElementById('idioma-select');
+        const titulo = document.getElementById('titulo-sagrado');
         const instrucciones = document.getElementById('instrucciones');
         const btnAceptar = document.getElementById('btn-aceptar');
-        const titulo = document.getElementById('titulo-sagrado');
+        let currentLang = idiomaSelect.value;
 
-        idiomaSelect.addEventListener('change', function () {
-            if (this.value === 'en') {
-                instrucciones.innerHTML = 'Find the clues and enter the<br>secret codes';
-                btnAceptar.textContent = 'Accept';
-                titulo.innerHTML = 'Sacred<br>Puzzle';
-            } else {
-                instrucciones.innerHTML = 'Busca las pistas e ingresa los<br>códigos secretos';
-                btnAceptar.textContent = 'Aceptar';
-                titulo.innerHTML = 'Sagrado<br>Puzzle';
+        const textos = {
+            es: {
+                titulo: 'Sagrado<br>Puzzle',
+                instrucciones: 'Busca las pistas e ingresa los<br>códigos secretos',
+                aceptar: 'Aceptar'
+            },
+            en: {
+                titulo: 'Sagrado<br>Puzzle',
+                instrucciones: 'Search for the clues and enter the<br>secret codes',
+                aceptar: 'Accept'
             }
+        };
+
+        function updateTexts(lang) {
+            titulo.innerHTML = textos[lang].titulo;
+            instrucciones.innerHTML = textos[lang].instrucciones;
+            btnAceptar.textContent = textos[lang].aceptar;
+            currentLang = lang;
+        }
+
+        idiomaSelect.addEventListener('change', function() {
+            updateTexts(idiomaSelect.value);
+        });
+
+        const container = document.querySelector('.container');
+
+        document.getElementById('btn-aceptar').addEventListener('click', function() {
+            // Siempre shake, ningún código es válido
+            container.classList.remove('shake');
+            void container.offsetWidth;
+            container.classList.add('shake');
+            setTimeout(() => {
+                container.classList.remove('shake');
+            }, 450);
         });
     </script>
 </body>
