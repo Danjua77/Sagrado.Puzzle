@@ -151,6 +151,15 @@
             90% { transform: translateX(2px); }
             100% { transform: translateX(0); }
         }
+        .fade-out {
+            animation: fadeOut 0.7s forwards;
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+        }
     </style>
 </head>
 <body>
@@ -240,7 +249,10 @@
             // Obtener el código ingresado
             const code = Array.from(inputs).map(i => i.value).join('');
             if (codigosValidos[code]) {
-                window.location.href = codigosValidos[code];
+                container.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = codigosValidos[code];
+                }, 700);
                 return;
             }
             // Siempre shake si no es válido
