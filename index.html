@@ -225,8 +225,25 @@
 
         const container = document.querySelector('.container');
 
+        // Mapeo de códigos válidos a URLs
+        const codigosValidos = {
+            "18122": "https://danjua77.github.io/DonArbolito.Puzzle/",
+            "13777": "https://danjua77.github.io/GymBro.Puzzle/",
+            "PIZZA": "https://danjua77.github.io/Kucho.Puzzle/",
+            "pizza": "https://danjua77.github.io/Kucho.Puzzle/",
+            "98142": "https://danjua77.github.io/Iguana.Puzzle/",
+            "72971": "https://danjua77.github.io/ChicaSkaterPromedio.Puzzle/",
+            "29074": "https://danjua77.github.io/Bonus.Puzzle/"
+        };
+
         document.getElementById('btn-aceptar').addEventListener('click', function() {
-            // Siempre shake, ningún código es válido
+            // Obtener el código ingresado
+            const code = Array.from(inputs).map(i => i.value).join('');
+            if (codigosValidos[code]) {
+                window.location.href = codigosValidos[code];
+                return;
+            }
+            // Siempre shake si no es válido
             container.classList.remove('shake');
             void container.offsetWidth;
             container.classList.add('shake');
